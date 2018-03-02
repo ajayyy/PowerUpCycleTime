@@ -26,7 +26,7 @@ public class Selection extends JFrame implements MouseListener, ActionListener{
 	Button selectRobot;
 	DirectoryChooser dirChooser;
 	private Button selectDir;
-	String directory = "C:\\Users\\P\\Desktop\\Test Folder";
+	String directory = "C:\\Users\\P\\Desktop\\#ScoutingData\\EventData";
 	private JSplitPane splitPane;
 	private JLabel dirLabel;
 

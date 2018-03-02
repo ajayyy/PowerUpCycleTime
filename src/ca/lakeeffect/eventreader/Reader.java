@@ -22,12 +22,10 @@ public class Reader {
 			return null;
 		}
 		
-		//Remove header line
-		scanner.nextLine();
 		ArrayList<Event> events = new ArrayList<Event>();
 		while(scanner.hasNextLine()){
 			String[] line = scanner.nextLine().split(",");
-			events.add(new Event(Integer.parseInt(line[0]), Integer.parseInt(line[1]), Float.parseFloat(line[2]), Integer.parseInt(line[3])));
+			events.add(new Event(Integer.parseInt(line[1]), Integer.parseInt(line[2]), Float.parseFloat(line[3]), Integer.parseInt(line[4])));
 			events.get(events.size()-1).print();
 		}
 		
@@ -59,7 +57,7 @@ class Event{
 	float time;
 	int meta;
 	
-	public Event(int location, int action, float time, int meta){
+	public Event(int action, int location, float time, int meta){
 		this.location = location;
 		this.action = action;
 		this.time = time;
