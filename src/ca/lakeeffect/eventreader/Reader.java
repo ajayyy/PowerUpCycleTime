@@ -25,7 +25,7 @@ public class Reader {
 		ArrayList<Event> events = new ArrayList<Event>();
 		while(scanner.hasNextLine()){
 			String[] line = scanner.nextLine().split(",");
-			events.add(new Event(Integer.parseInt(line[1]), Integer.parseInt(line[2]), Float.parseFloat(line[3]), Integer.parseInt(line[4])));
+			events.add(new Event(Integer.parseInt(line[1]), Integer.parseInt(line[2]), Long.parseLong(line[3]), Integer.parseInt(line[4])));
 			events.get(events.size()-1).print();
 		}
 		
@@ -54,10 +54,10 @@ public class Reader {
 class Event{
 	int location;
 	int action;
-	float time;
+	long time;
 	int meta;
 	
-	public Event(int action, int location, float time, int meta){
+	public Event(int action, int location, long time, int meta){
 		this.location = location;
 		this.action = action;
 		this.time = time;

@@ -26,7 +26,8 @@ public class Path {
 	}
 	
 	public void addRun(Event first, Event second){
-		times.add(second.time-first.time);
+		System.out.println((second.time - first.time) + "FDALKHASDLKJHASDLJKASD");
+		times.add(((second.time - first.time) /1000f));
 		count++;
 		float sum = 0;
 		for(float f : times){
