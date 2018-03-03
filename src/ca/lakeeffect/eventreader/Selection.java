@@ -97,7 +97,26 @@ public class Selection extends JFrame implements MouseListener, ActionListener{
 			String file = directory+"\\"+choice.getSelectedItem()+".csv";
 			System.out.println(file);		
 			new Field(choice.getSelectedItem(), 640, 480, file);//TODO
-
+			
+			for(int i = 0; i < choice.getItemCount(); i++) {
+				Reader reader = new Reader();
+				allRobotPaths.add(reader.read(choice.getItem(i)));
+			}
+			
+			for(Path path : paths) {
+				System.out.println((path.endLocation+1) + (path.startLocation+1) * 15);
+				times[(path.endLocation+1) + (path.startLocation+1) * 15] = path.averageTime;
+//				System.out.println(window.getTitle() + "," + path.startLocation + "," + path.endLocation + "," + path.averageTime);
+			}
+		
+			System.out.print("Robot Number,");
+			for(int i=0;i<times.length;i++) {
+				System.out.print(i/15 + " => " + (i % 15) + ",");
+			}
+			System.out.print("\n" + window.getTitle() + ",");
+			for(int i=0;i<times.length;i++) {
+				System.out.print(times[i] + ",");
+			}
 		}
 	}
 
