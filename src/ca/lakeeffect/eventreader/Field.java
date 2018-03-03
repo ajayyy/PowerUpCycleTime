@@ -58,10 +58,6 @@ public class Field extends JComponent implements MouseMotionListener, ActionList
 			new Point(1658,544),
 			new Point(1673,839)
 	};
-//	Point[] locations = {
-//			new Point(100,100),
-//			new Point(100, 200),
-//	};
 	
 	String[] locationNames = {
 			"Top Red Portal",
@@ -109,7 +105,6 @@ public class Field extends JComponent implements MouseMotionListener, ActionList
 		window.setLocationRelativeTo(null);
 		window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		addMouseMotionListener(this);
-		window.addKeyListener(this);
 		addKeyListener(this);
 		
 		try {
@@ -128,7 +123,7 @@ public class Field extends JComponent implements MouseMotionListener, ActionList
 		
 		g.fillRect(0, 0, window.getWidth(), window.getHeight());
 		
-		scale = (float) (window.getWidth()/(field.getWidth()*1.00));
+		scale = (float) (window.getWidth()/((float) field.getWidth()));
 		//I know it's redundant, but its there for the future
 		g.drawImage(field, 0, 0, (int) (field.getWidth()*scale), (int) (field.getHeight()*scale), null);
 		g.setColor(Color.green);
