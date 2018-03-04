@@ -40,12 +40,12 @@ public class Reader {
 			boolean exists = false;
 			for(Path p : paths){
 				
-				Event from = p.startLocation;
-				Event to = p.endLocation;
-				
-				if(from.match == to.match) {
-					if(p.startLocation == events.get(i-1).location && p.endLocation == events.get(i).location){
-						p.addRun(events.get(i-1), events.get(i));
+				if(p.startLocation == events.get(i-1).location && p.endLocation == events.get(i).location){
+					Event from = events.get(i-1);
+					Event to = events.get(i);
+					
+					if(from.match == to.match) {
+						p.addRun(from, to);
 						exists = true;
 					}
 				}
