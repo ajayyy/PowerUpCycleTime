@@ -9,6 +9,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -32,6 +36,25 @@ public class Selection extends JFrame implements MouseListener, ActionListener{
 	private JLabel dirLabel;
 
 	ArrayList<Path[]> allRobotPaths = new ArrayList<>();
+	ArrayList<String> allRobotNames = new ArrayList<>();
+	
+	String[] locationNames = {
+			"Ground",
+			"Top Red Portal",
+			"Red Vault",
+			"Bottom Red Portal",
+			"Red Pickup Location",
+			"Top Red Switch",
+			"Bottom Red Switch",
+			"Top Scale",
+			"Bottom Scale",
+			"Top Blue Switch",
+			"Bottom Blue Switch",
+			"Blue Pickup Location",
+			"Top Blue Portal",
+			"Blue Vault",
+			"Bottom Blue Portal"
+	};
 	
 	/**
 	 * Launch the application.
@@ -95,28 +118,67 @@ public class Selection extends JFrame implements MouseListener, ActionListener{
 		}
 		if(e.getSource() == selectRobot){
 			String file = directory+"\\"+choice.getSelectedItem()+".csv";
-			System.out.println(file);		
-			new Field(choice.getSelectedItem(), 640, 480, file);//TODO
 			
 			for(int i = 0; i < choice.getItemCount(); i++) {
 				Reader reader = new Reader();
-				allRobotPaths.add(reader.read(choice.getItem(i)));
+				allRobotPaths.add(reader.read(directory + "\\" + choice.getItem(i) + ".csv"));
+				allRobotNames.add(choice.getItem(i));
 			}
 			
-			for(Path path : paths) {
-				System.out.println((path.endLocation+1) + (path.startLocation+1) * 15);
-				times[(path.endLocation+1) + (path.startLocation+1) * 15] = path.averageTime;
-//				System.out.println(window.getTitle() + "," + path.startLocation + "," + path.endLocation + "," + path.averageTime);
+			String csv = "";
+			
+			csv += "Robot Number,";
+			for(int i=0;i<15 * 15;i++) {
+				csv += locationNames[i/15] + " => " + locationNames[i % 15] + ",";
 			}
-		
-			System.out.print("Robot Number,");
-			for(int i=0;i<times.length;i++) {
-				System.out.print(i/15 + " => " + (i % 15) + ",");
+			
+			for(int s = 0; s < allRobotPaths.size(); s++) {
+				float[] times = new float[15*15];
+				
+				for(int i=0;i<times.length;i++) {
+					times[i] = 0;
+				}
+				
+				for(Path path : allRobotPaths.get(s)) {
+//					System.out.println((path.endLocation+1) + (path.startLocation+1) * 15);
+					times[(path.endLocation+1) + (path.startLocation+1) * 15] = path.averageTime;
+//					System.out.println(window.getTitle() + "," + path.startLocation + "," + path.endLocation + "," + path.averageTime);
+				}
+			
+				csv += "\n" + allRobotNames.get(s) + ",";
+				for(int i=0;i<times.length;i++) {
+					csv += times[i] + ",";
+				}
 			}
-			System.out.print("\n" + window.getTitle() + ",");
-			for(int i=0;i<times.length;i++) {
-				System.out.print(times[i] + ",");
+			
+			File exportedCsv = new File(directory + "\\results\\CycleTimes.csv");
+			
+			exportedCsv.getParentFile().mkdirs();
+            if (!exportedCsv.exists()) {
+            	try {
+					exportedCsv.createNewFile();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+            }
+            
+            FileOutputStream f = null;
+			try {
+				f = new FileOutputStream(exportedCsv, true);
+			} catch (FileNotFoundException e2) {
+				e2.printStackTrace();
 			}
+
+            OutputStreamWriter out = new OutputStreamWriter(f);
+
+            try {
+				out.write(csv);
+				out.close();
+	            f.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
 		}
 	}
 
