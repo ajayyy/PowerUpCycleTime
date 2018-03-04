@@ -39,10 +39,17 @@ public class Reader {
 		for(int i = 1; i < events.size(); i ++){
 			boolean exists = false;
 			for(Path p : paths){
-				if(p.startLocation == events.get(i-1).location && p.endLocation == events.get(i).location){
-					p.addRun(events.get(i-1), events.get(i));
-					exists = true;
+				
+				Event from = p.startLocation;
+				Event to = p.endLocation;
+				
+				if(from.match == to.match) {
+					if(p.startLocation == events.get(i-1).location && p.endLocation == events.get(i).location){
+						p.addRun(events.get(i-1), events.get(i));
+						exists = true;
+					}
 				}
+				
 			}
 			if(!exists){
 				Event from = events.get(i-1);
