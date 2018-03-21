@@ -128,6 +128,11 @@ public class Selection extends JFrame implements MouseListener, ActionListener{
 			String csv = "";
 			
 			csv += "Robot Number,";
+			
+			for(int i=0;i<15;i++) {
+				csv += "Anywhere => " + locationNames[i % 15] + ",";
+			}
+			
 			for(int i=0;i<15 * 15;i++) {
 				csv += locationNames[i/15] + " => " + locationNames[i % 15] + ",";
 			}
@@ -139,6 +144,7 @@ public class Selection extends JFrame implements MouseListener, ActionListener{
 					times[i] = 0;
 				}
 				
+				
 				for(Path path : allRobotPaths.get(s)) {
 //					System.out.println((path.endLocation+1) + (path.startLocation+1) * 15);
 					times[(path.endLocation+1) + (path.startLocation+1) * 15] = path.averageTime;
@@ -146,6 +152,11 @@ public class Selection extends JFrame implements MouseListener, ActionListener{
 				}
 			
 				csv += "\n" + allRobotNames.get(s) + ",";
+				
+				for(int i=-1;i<14;i++) {
+					csv += getAverageTimeToLocation(allRobotPaths.get(s), i) + ",";
+				}
+				
 				for(int i=0;i<times.length;i++) {
 					csv += times[i] + ",";
 				}
@@ -180,6 +191,24 @@ public class Selection extends JFrame implements MouseListener, ActionListener{
 			}
 			
 		}
+	}
+	
+	//Returns average of anything to a location
+	public float getAverageTimeToLocation(Path[] robotPaths, int endLocation) {
+		
+		float timeSum = 0;
+		float timeAmount = 0;
+		
+		for(Path path : robotPaths) {
+			if(path.endLocation == endLocation) {
+				for(float time : path.times) {
+					timeSum += time;
+					timeAmount++;
+				}
+			}
+		}
+		
+		return timeSum/timeAmount;
 	}
 
 	public void changeDir(String directory){
