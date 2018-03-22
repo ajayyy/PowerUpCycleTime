@@ -117,7 +117,6 @@ public class Selection extends JFrame implements MouseListener, ActionListener{
 			frame.setVisible(true);
 		}
 		if(e.getSource() == selectRobot){
-			String file = directory+"\\"+choice.getSelectedItem()+".csv";
 			
 			for(int i = 0; i < choice.getItemCount(); i++) {
 				Reader reader = new Reader();
@@ -125,71 +124,198 @@ public class Selection extends JFrame implements MouseListener, ActionListener{
 				allRobotNames.add(choice.getItem(i));
 			}
 			
-			String csv = "";
+			saveCycleTimes();
 			
-			csv += "Robot Number,";
+			saveCycleTimesSimplified();
 			
-			for(int i=0;i<15;i++) {
-				csv += "Anywhere => " + locationNames[i % 15] + ",";
+		}
+	}
+	
+	public float getAverageOfTwoLocations(Path path1, Path path2) {
+		float timeSum = 0;
+		float timeAmount = 0;
+		
+		for(float time : path1.times) {
+			timeSum += time;
+			timeAmount++;
+		}
+		for(float time : path2.times) {
+			timeSum += time;
+			timeAmount++;
+		}
+		
+		return timeSum/timeAmount;
+	}
+	
+	public void saveCycleTimesSimplified() {
+		String csv = "";
+		
+		csv += "Robot Number,";
+		
+		for(int i=0;i<15;i++) {
+			
+			if(i == 0 || i == 1 || i == 3 || i == 4 || i == 11 || i == 12) {
+				continue;
 			}
 			
-			for(int i=0;i<15 * 15;i++) {
-				csv += locationNames[i/15] + " => " + locationNames[i % 15] + ",";
+			csv += "Anywhere => " + locationNames[i % 15] + ",";
+			
+			if(i == 5 || i == 7 || i == 9) {
+				i++;
+			}
+		}
+		
+		for(int i=0;i<15 * 15;i++) {
+			
+			if(i % 15 == 0 || i % 15 == 1 || i % 15 == 3 || i % 15 == 4 || i % 15 == 11 || i % 15 == 12) {
+				continue;
 			}
 			
-			for(int s = 0; s < allRobotPaths.size(); s++) {
-				float[] times = new float[15*15];
-				
-				for(int i=0;i<times.length;i++) {
-					times[i] = 0;
-				}
-				
-				
-				for(Path path : allRobotPaths.get(s)) {
-//					System.out.println((path.endLocation+1) + (path.startLocation+1) * 15);
-					times[(path.endLocation+1) + (path.startLocation+1) * 15] = path.averageTime;
-//					System.out.println(window.getTitle() + "," + path.startLocation + "," + path.endLocation + "," + path.averageTime);
-				}
-			
-				csv += "\n" + allRobotNames.get(s) + ",";
-				
-				for(int i=-1;i<14;i++) {
-					csv += getAverageTimeToLocation(allRobotPaths.get(s), i) + ",";
-				}
-				
-				for(int i=0;i<times.length;i++) {
-					csv += times[i] + ",";
-				}
-			}
-			
-			File exportedCsv = new File(directory + "\\results\\CycleTimes.csv");
-			
-			exportedCsv.getParentFile().mkdirs();
-            if (!exportedCsv.exists()) {
-            	try {
-					exportedCsv.createNewFile();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-            }
-            
-            FileOutputStream f = null;
-			try {
-				f = new FileOutputStream(exportedCsv, true);
-			} catch (FileNotFoundException e2) {
-				e2.printStackTrace();
-			}
+			csv += locationNames[i/15] + " => " + locationNames[i % 15] + ",";
 
-            OutputStreamWriter out = new OutputStreamWriter(f);
-
-            try {
-				out.write(csv);
-				out.close();
-	            f.close();
+			if(i % 15 == 5 || i % 15 == 7 || i % 15 == 9) {
+				i++;
+			}
+		}
+		
+		for(int s = 0; s < allRobotPaths.size(); s++) {
+			float[] times = new float[15*15];
+			
+			for(int i=0;i<times.length;i++) {
+				times[i] = 0;
+			}
+			
+			
+			for(int i=0;i<allRobotPaths.get(s).length;i++) {
+				
+				Path path = allRobotPaths.get(s)[i];
+				
+				if(path.endLocation == -1 || path.endLocation == 0 || path.endLocation == 2 || path.endLocation == 3 || path.endLocation == 10 || path.endLocation == 11) {
+					continue;
+				}
+				
+				if(path.endLocation == 4 || path.endLocation == 6 || path.endLocation == 8) {
+					i++;
+				}
+				
+//				System.out.println((path.endLocation+1) + (path.startLocation+1) * 15);
+				times[(path.endLocation+1) + (path.startLocation+1) * 15] = path.averageTime;
+//				System.out.println(window.getTitle() + "," + path.startLocation + "," + path.endLocation + "," + path.averageTime);
+			}
+		
+			csv += "\n" + allRobotNames.get(s) + ",";
+			
+			for(int i=-1;i<14;i++) {
+				
+				if(i == -1 || i == 0 || i == 2 || i == 3 || i == 10 || i == 11) {
+					continue;
+				}
+				
+				csv += getAverageTimeToLocation(allRobotPaths.get(s), i) + ",";
+				
+				if(i == 4 || i == 6 || i == 8) {
+					i++;
+				}
+			}
+			
+			for(int i=0;i<times.length;i++) {
+				csv += times[i] + ",";
+			}
+		}
+		
+		File exportedCsv = new File(directory + "\\results\\CycleTimesSimplified.csv");
+		
+		exportedCsv.getParentFile().mkdirs();
+        if (!exportedCsv.exists()) {
+        	try {
+				exportedCsv.createNewFile();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+        }
+        
+        FileOutputStream f = null;
+		try {
+			f = new FileOutputStream(exportedCsv, true);
+		} catch (FileNotFoundException e2) {
+			e2.printStackTrace();
+		}
+
+        OutputStreamWriter out = new OutputStreamWriter(f);
+
+        try {
+			out.write(csv);
+			out.close();
+            f.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	public void saveCycleTimes() {
+		String csv = "";
+		
+		csv += "Robot Number,";
+		
+		for(int i=0;i<15;i++) {
+			csv += "Anywhere => " + locationNames[i % 15] + ",";
+		}
+		
+		for(int i=0;i<15 * 15;i++) {
+			csv += locationNames[i/15] + " => " + locationNames[i % 15] + ",";
+		}
+		
+		for(int s = 0; s < allRobotPaths.size(); s++) {
+			float[] times = new float[15*15];
 			
+			for(int i=0;i<times.length;i++) {
+				times[i] = 0;
+			}
+			
+			
+			for(Path path : allRobotPaths.get(s)) {
+//				System.out.println((path.endLocation+1) + (path.startLocation+1) * 15);
+				times[(path.endLocation+1) + (path.startLocation+1) * 15] = path.averageTime;
+//				System.out.println(window.getTitle() + "," + path.startLocation + "," + path.endLocation + "," + path.averageTime);
+			}
+		
+			csv += "\n" + allRobotNames.get(s) + ",";
+			
+			for(int i=-1;i<14;i++) {
+				csv += getAverageTimeToLocation(allRobotPaths.get(s), i) + ",";
+			}
+			
+			for(int i=0;i<times.length;i++) {
+				csv += times[i] + ",";
+			}
+		}
+		
+		File exportedCsv = new File(directory + "\\results\\CycleTimes.csv");
+		
+		exportedCsv.getParentFile().mkdirs();
+        if (!exportedCsv.exists()) {
+        	try {
+				exportedCsv.createNewFile();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+        }
+        
+        FileOutputStream f = null;
+		try {
+			f = new FileOutputStream(exportedCsv, true);
+		} catch (FileNotFoundException e2) {
+			e2.printStackTrace();
+		}
+
+        OutputStreamWriter out = new OutputStreamWriter(f);
+
+        try {
+			out.write(csv);
+			out.close();
+            f.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 	}
 	
